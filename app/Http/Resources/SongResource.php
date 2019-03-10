@@ -18,9 +18,9 @@ class SongResource extends Resource
             'id' => $this->id, 
             'name' => $this->name,
             'creationDate' => $this->creationDate,
-            'genre' => $this->imageUrl,
-            'origin' => $this->imageUrl,
-            'duration' => $this->imageUrl,
+            'genre' => $this->genre,
+            'origin' => $this->origin,
+            'duration' => $this->duration,
             'artists' => new ArtistCollection($this->whenLoaded('artists')),
             'album' => new AlbumResource($this->whenLoaded('album'))
         ];

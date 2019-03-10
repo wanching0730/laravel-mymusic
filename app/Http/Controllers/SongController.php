@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Song;
+use Illuminate\Http\Request;
+use App\Http\Resources\SongResource;
+use App\Http\Resources\SongCollection;
+use App\Http\Resources\ArtistResource;
+use App\Http\Resources\ArtistCollection;
 use Illuminate\Validation\ValidationException;
 
 
@@ -14,9 +18,29 @@ class SongController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $name = $request->input('name');
+        $genre = $request->input('genre');
+        $origin = $request->input('origin');
+
+       $songs = Song::with(['artists','album'])
+                ->when($name, function($query) use ($name) {
+                    return $query->where('name',$name);
+                })
+                ->when($genre, function($query) use ($genre) {
+                    return $query->where('genre',$genre);
+                })
+                ->when($origin, function($query) use ($origin) {
+                    return $query->where('origin',$origin);
+                })
+                ->get();
+
+        // $songs = Song::with(['artists' => function ($query) use ($name) {
+        //     $query->where('name', 'like', '%$name%');
+        // }])->get();
+
+        return new SongCollection($songs);
     }
 
     /**
