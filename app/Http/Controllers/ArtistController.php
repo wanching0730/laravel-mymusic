@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Artist;
 use Illuminate\Http\Request;
 
 class ArtistController extends Controller
@@ -34,7 +35,11 @@ class ArtistController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $artist = Artist::create($request->all());
+            return response()->json([
+            'id' => $artist->id,
+            'created_at' => $artist->created_at,
+            ], 201);
     }
 
     /**

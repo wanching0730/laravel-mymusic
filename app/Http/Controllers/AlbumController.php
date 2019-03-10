@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Album;
 use Illuminate\Http\Request;
 
 class AlbumController extends Controller
@@ -23,7 +24,7 @@ class AlbumController extends Controller
      */
     public function create()
     {
-        //
+        
     }
 
     /**
@@ -34,7 +35,11 @@ class AlbumController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $album = Album::create($request->all());
+            return response()->json([
+                'id' => $album->id,
+                'created_at' => $album->created_at,
+            ], 201);
     }
 
     /**
