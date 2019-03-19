@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use DB;
 use App\Song;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Http\Resources\SongResource;
 use App\Http\Resources\SongCollection;
@@ -23,24 +25,28 @@ class SongController extends Controller
         $name = $request->input('name');
         $genre = $request->input('genre');
         $origin = $request->input('origin');
+        $artistName = $request->input('artistName');
+        $albumName = $request->input('albumName');
 
        $songs = Song::with(['artists','album'])
-                ->when($name, function($query) use ($name) {
-                    return $query->where('name',$name);
-                })
-                ->when($genre, function($query) use ($genre) {
-                    return $query->where('genre',$genre);
-                })
-                ->when($origin, function($query) use ($origin) {
-                    return $query->where('origin',$origin);
-                })
-                ->get();
+           ->when($name, function ($query) use ($name) {
+               return $query->where('name', 'LIKE', '%$name%');
+           })
+           ->when($genre, function ($query) use ($genre) {
+               return $query->where('genre', 'LIKE', '%$gender%');
+           })
+           ->when($origin, function ($query) use ($origin) {
+               return $query->where('origin', 'LIKE', '%$origin%');
+           })
+           ->whereHas('artists', function($query) use ($artistName) {
+               $query->where('name', 'LIKE', "%$artistName%");
+           })
+           ->whereHas('album', function($query) use ($albumName) {
+               $query->where('name', 'LIKE', "%$albumName%");
+           })
+           ->get();
 
-        // $songs = Song::with(['artists' => function ($query) use ($name) {
-        //     $query->where('name', 'like', '%$name%');
-        // }])->get();
-
-        return new SongCollection($songs);
+       return new SongCollection($songs);
     }
 
     /**
@@ -63,11 +69,16 @@ class SongController extends Controller
     {
         try {
             $song = Song::create($request->all());
-            $song->artists()->sync($request->artists);
+            $song->album_id = $request->album_id;
+
+            DB::transaction(function() use($song, $request) {
+                $song->saveOrFail();
+                $song->artists()->sync($request->artists);
+            });
 
             return response()->json([
                 'id' => $song->id,
-                'created_at' => $song->created_at,
+                'created_at' => $song->created_at
             ], 201);
         } catch (ValidationException $ex) {
             return response()->json(['errors' => $ex->errors()], 422);
@@ -84,7 +95,20 @@ class SongController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            $song = Song::with('artists')->with('album')->find($id);
+
+            if(!$song) throw new ModelNotFoundException;
+
+            return new SongResource($song);
+        } catch (ModelNotFoundException $ex) {
+            return response()->json([
+                'message' => $ex->getMessage()], 404);
+        } catch(\Exception $ex) {
+            return response()->json([
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -107,7 +131,23 @@ class SongController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+            $song = Song::find($id);
+
+            if (!$song) throw new ModelNotFoundException;
+
+            $song->update($request->all());
+            $song->artists()->sync($request->artists);
+
+            return response()->json('Data updated successfully', 200);
+        } catch (ModelNotFoundException $ex) {
+            return response()->json([
+                'message' => $ex->getMessage()], 404);
+        } catch(\Exception $ex) {
+            return response()->json([
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -118,6 +158,17 @@ class SongController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $song = Song::find($id);
+
+            if (!$song) throw new ModelNotFoundException;
+
+            $song->delete();
+
+            return response()->json('Data deleted successfully', 200);
+        } catch (ModelNotFoundException $ex) {
+            return response()->json([
+                'message' => $ex->getMessage() ], 404);
+        }
     }
 }

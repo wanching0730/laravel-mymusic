@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use DB;
 use App\Artist;
+use App\Http\Resources\ArtistResource;
+use App\Http\Resources\ArtistCollection;
 use Illuminate\Http\Request;
 
 class ArtistController extends Controller
@@ -12,9 +15,25 @@ class ArtistController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $name = $request->input('name');
+        $nationality = $request->input('nationality');
+        $songName = $request->input('songName');
+
+        $artists = Artist::with('songs')
+            ->when($name, function ($query) use ($name) {
+                return $query->where('name', 'LIKE', '%$name%');
+            })
+            ->when($nationality, function ($query) use ($nationality) {
+                return $query->where('genre', 'LIKE', '%$nationality%');
+            })
+            ->whereHas('songs', function($query) use ($songName) {
+                return $query->where('name', 'LIKE', '%$songName%');
+            })
+            ->get();
+
+        return new ArtistCollection($artists);
     }
 
     /**
@@ -35,11 +54,24 @@ class ArtistController extends Controller
      */
     public function store(Request $request)
     {
-        $artist = Artist::create($request->all());
+        try {
+            $artist = Artist::create($request->all());
+
+            DB::transaction(function() use($artist, $request) {
+                $artist->saveOrFail();
+                $artist->songs()->sync($request->songs);
+            });
+
             return response()->json([
-            'id' => $artist->id,
-            'created_at' => $artist->created_at,
-            ], 201);
+                'id' => $artist->id,
+                'created_at' => $artist->created_at,
+            ], 201);  
+
+        } catch (ValidationException $ex) {
+            return response()->json(['errors' => $ex->errors()], 422);
+        } catch (\Exception $ex) {
+            return response()->json(['errors' => $ex->message()], 422);
+        }
     }
 
     /**
@@ -50,7 +82,17 @@ class ArtistController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            // load both authors and publisher attributes
+            $artist = Artist::with('songs')->find($id);
+            if(!$artist) throw new ModelNotFoundException;
+
+            return new ArtistResource($artist);
+        } catch(ModelNotFoundException $ex) {
+            return response()->json([
+                'message' => $ex->getMessage(),
+            ], 404);
+        }
     }
 
     /**
@@ -73,7 +115,22 @@ class ArtistController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+            $artist = Artist::find($id);
+
+            if(!$artist) throw new ModelNotFoundException; 
+
+            $artist->update($request->all());
+            $artist->songs()->sync($request->songs);
+
+            return response()->json(null, 204);
+        } catch (ModelNotFoundException $ex) {
+            return response()->json([
+                'message' => $ex->getMessage()], 404);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'message' => $ex->getMessage()], 500);
+        }
     }
 
     /**
@@ -84,6 +141,17 @@ class ArtistController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $artist = Artist::find($id);
+
+            if (!$artist) throw new ModelNotFoundException;
+
+            $artist->delete();
+
+            return response()->json('Data deleted successfully', 200);
+        } catch (ModelNotFoundException $ex) {
+            return response()->json([
+                'message' => $ex->getMessage() ], 404);
+        }
     }
 }

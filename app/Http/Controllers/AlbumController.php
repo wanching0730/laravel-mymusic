@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use DB;
 use App\Album;
+use App\Http\Resources\AlbumResource;
+use App\Http\Resources\AlbumCollection;
 use Illuminate\Http\Request;
 
 class AlbumController extends Controller
@@ -14,7 +17,19 @@ class AlbumController extends Controller
      */
     public function index()
     {
-        //
+        $name = $request->input('name');
+        $songName = $request->input('songName');
+
+        $albums = Album::with('songs')
+            ->when($name, function ($query) use ($name) {
+                return $query->where('name', 'LIKE', '%$name%');
+            })
+            ->whereHas('songs', function($query) use ($songName) {
+                return $query->where('name', 'LIKE', '%$songName%');
+            })
+            ->get();
+
+        return new AlbumCollection($albums);
     }
 
     /**
@@ -35,11 +50,24 @@ class AlbumController extends Controller
      */
     public function store(Request $request)
     {
-        $album = Album::create($request->all());
+        try {
+            $album = Album::create($request->all());
+
+            DB::transaction(function() use($album, $request) {
+                $album->saveOrFail();
+                $album->songs()->sync($request->songs);
+            });
+
             return response()->json([
                 'id' => $album->id,
                 'created_at' => $album->created_at,
-            ], 201);
+            ], 201);  
+
+        } catch (ValidationException $ex) {
+            return response()->json(['errors' => $ex->errors()], 422);
+        } catch (\Exception $ex) {
+            return response()->json(['errors' => $ex->message()], 422);
+        }
     }
 
     /**
@@ -50,7 +78,17 @@ class AlbumController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            // load both authors and publisher attributes
+            $album = Album::with('songs')->find($id);
+            if(!$album) throw new ModelNotFoundException;
+
+            return new AlbumResource($album);
+        } catch(ModelNotFoundException $ex) {
+            return response()->json([
+                'message' => $ex->getMessage(),
+            ], 404);
+        }
     }
 
     /**
@@ -73,7 +111,22 @@ class AlbumController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+            $album = Album::find($id);
+
+            if(!$album) throw new ModelNotFoundException; 
+
+            $album->update($request->all());
+            $album->songs()->sync($request->songs);
+
+            return response()->json(null, 204);
+        } catch (ModelNotFoundException $ex) {
+            return response()->json([
+                'message' => $ex->getMessage()], 404);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'message' => $ex->getMessage()], 500);
+        }
     }
 
     /**
@@ -84,6 +137,17 @@ class AlbumController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $album = Album::find($id);
+
+            if (!$album) throw new ModelNotFoundException;
+
+            $album->delete();
+
+            return response()->json('Data deleted successfully', 200);
+        } catch (ModelNotFoundException $ex) {
+            return response()->json([
+                'message' => $ex->getMessage() ], 404);
+        }
     }
 }
