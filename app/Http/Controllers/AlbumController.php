@@ -6,6 +6,7 @@ use DB;
 use App\Album;
 use App\Http\Resources\AlbumResource;
 use App\Http\Resources\AlbumCollection;
+use App\Http\Requests\StoreAlbumRequest;
 use Illuminate\Http\Request;
 
 class AlbumController extends Controller
@@ -15,7 +16,7 @@ class AlbumController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $name = $request->input('name');
         $songName = $request->input('songName');
@@ -48,15 +49,10 @@ class AlbumController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreAlbumRequest $request)
     {
         try {
             $album = Album::create($request->all());
-
-            DB::transaction(function() use($album, $request) {
-                $album->saveOrFail();
-                $album->songs()->sync($request->songs);
-            });
 
             return response()->json([
                 'id' => $album->id,
@@ -66,7 +62,7 @@ class AlbumController extends Controller
         } catch (ValidationException $ex) {
             return response()->json(['errors' => $ex->errors()], 422);
         } catch (\Exception $ex) {
-            return response()->json(['errors' => $ex->message()], 422);
+            return response()->json(['errors' => $ex->getMessage()], 422);
         }
     }
 

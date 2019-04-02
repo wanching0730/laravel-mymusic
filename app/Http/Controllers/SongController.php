@@ -10,6 +10,7 @@ use App\Http\Resources\SongResource;
 use App\Http\Resources\SongCollection;
 use App\Http\Resources\ArtistResource;
 use App\Http\Resources\ArtistCollection;
+use App\Http\Requests\StoreSongRequest;
 use Illuminate\Validation\ValidationException;
 
 
@@ -65,7 +66,7 @@ class SongController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreSongRequest $request)
     {
         try {
             $song = Song::create($request->all());

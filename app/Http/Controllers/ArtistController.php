@@ -6,6 +6,7 @@ use DB;
 use App\Artist;
 use App\Http\Resources\ArtistResource;
 use App\Http\Resources\ArtistCollection;
+use App\Http\Requests\StoreArtistRequest;
 use Illuminate\Http\Request;
 
 class ArtistController extends Controller
@@ -13,7 +14,7 @@ class ArtistController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return ArtistCollection
      */
     public function index(Request $request)
     {
@@ -52,7 +53,7 @@ class ArtistController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreArtistRequest $request)
     {
         try {
             $artist = Artist::create($request->all());
@@ -78,7 +79,7 @@ class ArtistController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return ArtistResource
      */
     public function show($id)
     {
