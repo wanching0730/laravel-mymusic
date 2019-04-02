@@ -29,4 +29,11 @@ class StoreAlbumRequest extends ApiFormRequest
             'imageUrl' => ['required', 'regex:/(\d)+.(?:jpe?g|png|gif)/']
         ];
     }
+
+    public function messages() {
+        return [
+            'creationDate.date_format' => 'Date format must be in format like 30-04-10',
+            'imageUrl.regex' => 'Image URL format must match valid http or https url and either jpeg,jpg,png,gif format'
+        ];
+    }
 }

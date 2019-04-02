@@ -29,4 +29,10 @@ class StoreSongRequest extends ApiFormRequest
             'creationDate' => 'date_format:Y-m-d',
         ];
     }
+
+    public function messages() {
+        return [
+            'creationDate.date_format' => 'Date format must be in format like 30-04-10'
+        ];
+    }
 }
