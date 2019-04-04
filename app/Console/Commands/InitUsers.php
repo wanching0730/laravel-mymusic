@@ -22,9 +22,9 @@ class InitUsers extends Command
     protected $description = 'Initialize default users';
 
     private $users_data = [ 
-        ['name' => 'Administrator', 'email' => 'admin@mylib.info', 'password' => 'adminpass'], 
-        ['name' => 'User One', 'email' => 'user1@mylib.info', 'password' => 'user1pass'], 
-        ['name' => 'User Two', 'email' => 'user2@mylib.info', 'password' => 'user2pass'], 
+        ['name' => 'Administrator', 'email' => 'admin@mymusic.info', 'password' => 'adminpass'], 
+        ['name' => 'User One', 'email' => 'user1@mymusic.info', 'password' => 'user1pass'], 
+        ['name' => 'User Two', 'email' => 'user2@mymusic.info', 'password' => 'user2pass'], 
     ];
 
     /**

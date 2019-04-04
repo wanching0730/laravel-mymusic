@@ -35,3 +35,40 @@ Route::middleware('jwt.auth')->group(function() {
     Route::apiResource('songs', 'SongController');
     Route::apiResource('artists', 'ArtistController');
 });
+
+Route::middleware(['jwt.auth', 'can:manage-users'])->group(function() {
+    // Routes for managing users (not developed in the practical exercise)
+});
+
+Route::middleware(['jwt.auth', 'can:manage-all'])->group(function() {
+
+    Route::apiResource('artists', 'ArtistController')->only([
+        'store',
+        'update',
+    ]);
+    Route::apiResource('albums', 'AlbumController')->only([
+        'store',
+        'update',
+    ]);
+    Route::apiResource('songs', 'SongController')->only([
+        'store',
+        'update',
+    ]);
+
+});
+
+Route::middleware(['jwt.auth', 'can:view-all'])->group(function() {
+
+    Route::apiResource('artists', 'ArtistController')->only([
+        'index',
+        'show',
+    ]);
+    Route::apiResource('albums', 'AlbumController')->only([
+        'index',
+        'show',
+    ]);
+    Route::apiResource('songs', 'SongController')->only([
+        'index',
+        'show',
+    ]);
+});
