@@ -31,13 +31,13 @@ class SongController extends Controller
 
        $songs = Song::with(['artists','album'])
            ->when($name, function ($query) use ($name) {
-               return $query->where('name', 'LIKE', '%$name%');
+               return $query->where('name', 'LIKE', "%$name%");
            })
            ->when($genre, function ($query) use ($genre) {
-               return $query->where('genre', 'LIKE', '%$gender%');
+               return $query->where('genre', 'LIKE', "%$gender%");
            })
            ->when($origin, function ($query) use ($origin) {
-               return $query->where('origin', 'LIKE', '%$origin%');
+               return $query->where('origin', 'LIKE', "%$origin%");
            })
            ->whereHas('artists', function($query) use ($artistName) {
                $query->where('name', 'LIKE', "%$artistName%");
@@ -84,7 +84,7 @@ class SongController extends Controller
         } catch (ValidationException $ex) {
             return response()->json(['errors' => $ex->errors()], 422);
         } catch(\Exception $ex) {
-            return response()->json(['errors' => $ex->message()], 422);
+            return response()->json(['errors' => $ex->getMessage()], 422);
         }
     }
 

@@ -24,13 +24,13 @@ class ArtistController extends Controller
 
         $artists = Artist::with('songs')
             ->when($name, function ($query) use ($name) {
-                return $query->where('name', 'LIKE', '%$name%');
+                return $query->where('name', 'LIKE', "%$name%");
             })
             ->when($nationality, function ($query) use ($nationality) {
-                return $query->where('genre', 'LIKE', '%$nationality%');
+                return $query->where('genre', 'LIKE', "%$nationality%");
             })
             ->whereHas('songs', function($query) use ($songName) {
-                return $query->where('name', 'LIKE', '%$songName%');
+                return $query->where('name', 'LIKE', "%$songName%");
             })
             ->get();
 

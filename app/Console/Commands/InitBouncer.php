@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use Bouncer;
+use App\User;
 use Illuminate\Console\Command;
 
 class InitBouncer extends Command
@@ -82,13 +84,13 @@ class InitBouncer extends Command
         Bouncer::allow($member)->to($viewAll);
 
         // Assign roles to users
-        $user = User::where('email', 'admin@mymusic.info');
+        $user = User::where('email', 'admin@mymusic.info')->first();
         Bouncer::assign($admin)->to($user);
 
-        $user = User::where('email', 'user1@mymusic.info');
+        $user = User::where('email', 'user1@mymusic.info')->first();
         Bouncer::assign($staff)->to($user);
 
-        $user = User::where('email', 'user2@mymusic.info');
+        $user = User::where('email', 'user2@mymusic.info')->first();
         Bouncer::assign($member)->to($user);
     }
 }

@@ -23,10 +23,10 @@ class AlbumController extends Controller
 
         $albums = Album::with('songs')
             ->when($name, function ($query) use ($name) {
-                return $query->where('name', 'LIKE', '%$name%');
+                return $query->where('name', 'LIKE', "%$name%");
             })
             ->whereHas('songs', function($query) use ($songName) {
-                return $query->where('name', 'LIKE', '%$songName%');
+                $query->where('name', 'LIKE', "%$songName%");
             })
             ->get();
 
