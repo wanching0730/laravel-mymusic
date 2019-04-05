@@ -45,20 +45,20 @@ class InitBouncer extends Command
             'title' => 'Administrator'
         ]);
 
-        $staff = Bouncer::role()->create([
-            'name' => 'staff',
-            'title' => 'Staff'
-        ]);
-
         $member = Bouncer::role()->create([
             'name' => 'member',
             'title' => 'Member'
         ]);
 
+        $guest = Bouncer::role()->create([
+            'name' => 'guest',
+            'title' => 'Guest'
+        ]);
+
         // Define rights
-        $manageUsers = Bouncer::ability()->create([
-            'name' => 'manage-users',
-            'title' => 'Manage Users'
+        $manageMembers = Bouncer::ability()->create([
+            'name' => 'manage-members',
+            'title' => 'Manage Members'
         ]);
 
         // manage songs, albums, artists
@@ -74,23 +74,21 @@ class InitBouncer extends Command
         ]);
 
         // Assign rights to roles
-        Bouncer::allow($admin)->to($manageUsers);
-        Bouncer::allow($admin)->to($manageAll);
-        Bouncer::allow($admin)->to($viewAll);
+        Bouncer::allow($admin)->to($manageMembers);
 
-        Bouncer::allow($staff)->to($manageAll);
-        Bouncer::allow($staff)->to($viewAll);
-
+        Bouncer::allow($member)->to($manageAll);
         Bouncer::allow($member)->to($viewAll);
+
+        Bouncer::allow($guest)->to($viewAll);
 
         // Assign roles to users
         $user = User::where('email', 'admin@mymusic.info')->first();
         Bouncer::assign($admin)->to($user);
 
         $user = User::where('email', 'user1@mymusic.info')->first();
-        Bouncer::assign($staff)->to($user);
+        Bouncer::assign($member)->to($user);
 
         $user = User::where('email', 'user2@mymusic.info')->first();
-        Bouncer::assign($member)->to($user);
+        Bouncer::assign($guest)->to($user);
     }
 }
