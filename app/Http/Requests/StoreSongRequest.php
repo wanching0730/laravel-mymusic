@@ -32,7 +32,7 @@ class StoreSongRequest extends ApiFormRequest
 
     public function messages() {
         return [
-            'creationDate.date_format' => 'Date format must be in format like 30-04-10'
+            'creationDate.date_format' => 'Date format must be in format like 2018-04-30'
         ];
     }
 }

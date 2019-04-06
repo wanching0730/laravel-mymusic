@@ -22,7 +22,7 @@ class AlbumController extends Controller
         $name = $request->input('name');
         $songName = $request->input('songName');
 
-        $albums = Album::with('songs')
+        $albums = Album::with('songs', 'songs.artist')
             ->when($name, function ($query) use ($name) {
                 return $query->where('name', 'LIKE', "%$name%");
             })
