@@ -19,6 +19,9 @@ class CreateAlbumsTable extends Migration
             $table->string('name', 30)->index();
             $table->date('creationDate')->index();
             $table->string('imageUrl',100)->index();
+            $table->unsignedInteger('user_id');
+
+            $table->foreign('user_id')->references('id')->on('users');
 
             $table->timestamps();
         });

@@ -61,10 +61,19 @@ class InitBouncer extends Command
             'title' => 'Manage Members'
         ]);
 
-        // manage songs, albums, artists
-        $manageAll = Bouncer::ability()->create([
-            'name' => 'manage-all',
-            'title' => 'Manage All'
+        $manageSongs = Bouncer::ability()->create([
+            'name' => 'manage-songs',
+            'title' => 'Manage Songs'
+        ]);
+
+        $manageArtists = Bouncer::ability()->create([
+            'name' => 'manage-artists',
+            'title' => 'Manage Artists'
+        ]);
+
+        $manageAlbums = Bouncer::ability()->create([
+            'name' => 'manage-albums',
+            'title' => 'Manage Albums'
         ]);
 
         // view songs, albums, artists
@@ -75,8 +84,11 @@ class InitBouncer extends Command
 
         // Assign rights to roles
         Bouncer::allow($admin)->to($manageMembers);
+        Bouncer::allow($admin)->to($manageSongs);
+        Bouncer::allow($admin)->to($manageArtists);
+        Bouncer::allow($admin)->to($viewAll);
 
-        Bouncer::allow($member)->to($manageAll);
+        Bouncer::allow($member)->to($manageAlbums);
         Bouncer::allow($member)->to($viewAll);
 
         Bouncer::allow($guest)->to($viewAll);
