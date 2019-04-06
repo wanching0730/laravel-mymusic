@@ -19,7 +19,7 @@ class AlbumResource extends Resource
             'name' => $this->name,
             'creationDate' => $this->creationDate,
             'imageUrl' => $this->imageUrl,
-            // 'user' => new UserResource($this->whenLoaded('user')),
+            'user' => new UserResource($this->whenLoaded('user')),
             'songs' => new SongCollection($this->whenLoaded('songs'))
         ];
     }

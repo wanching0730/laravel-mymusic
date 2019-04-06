@@ -22,7 +22,7 @@ class AlbumController extends Controller
         $name = $request->input('name');
         $songName = $request->input('songName');
 
-        $albums = Album::with('songs', 'songs.artist')
+        $albums = Album::with('songs', 'songs.artist', 'user')
             ->when($name, function ($query) use ($name) {
                 return $query->where('name', 'LIKE', "%$name%");
             })
@@ -82,7 +82,7 @@ class AlbumController extends Controller
     {
         try {
             // load both authors and publisher attributes
-            $album = Album::with('songs')->find($id);
+            $album = Album::with('songs', 'songs.artist', 'user')->find($id);
             if(!$album) throw new ModelNotFoundException;
 
             return new AlbumResource($album);
@@ -113,16 +113,19 @@ class AlbumController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (Gate::allows('update-post', $post)) {
+        
             try {
                 $album = Album::find($id);
+
+                if (Gate::allows('update-album', $album)) {
     
-                if(!$album) throw new ModelNotFoundException; 
-    
-                $album->update($request->all());
-                $album->songs()->sync($request->songs);
-    
-                return response()->json(null, 204);
+                    if(!$album) throw new ModelNotFoundException; 
+        
+                    $album->update($request->all());
+                    $album->songs()->sync($request->songs);
+        
+                    return response()->json(null, 204);
+               }
             } catch (ModelNotFoundException $ex) {
                 return response()->json([
                     'message' => $ex->getMessage()], 404);
@@ -130,7 +133,7 @@ class AlbumController extends Controller
                 return response()->json([
                     'message' => $ex->getMessage()], 500);
             }
-        }
+        
     }
 
     /**
@@ -146,6 +149,7 @@ class AlbumController extends Controller
 
             if (!$album) throw new ModelNotFoundException;
 
+            $album->songs()->detach();
             $album->delete();
 
             return response()->json('Data deleted successfully', 200);

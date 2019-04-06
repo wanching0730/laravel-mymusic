@@ -25,6 +25,7 @@ class InitUsers extends Command
         ['name' => 'Administrator', 'email' => 'admin@mymusic.info', 'password' => 'adminpass'], 
         ['name' => 'User One', 'email' => 'user1@mymusic.info', 'password' => 'user1pass'], 
         ['name' => 'User Two', 'email' => 'user2@mymusic.info', 'password' => 'user2pass'], 
+        ['name' => 'User Three', 'email' => 'user3@mymusic.info', 'password' => 'user3pass'], 
     ];
 
     /**

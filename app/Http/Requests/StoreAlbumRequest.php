@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\IsImageUrl;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreAlbumRequest extends ApiFormRequest
@@ -26,7 +27,8 @@ class StoreAlbumRequest extends ApiFormRequest
         return [
             'name' => 'max:50',
             'creationDate' => 'date_format:Y-m-d',
-            'imageUrl' => ['required', 'regex:/(\d)+.(?:jpe?g|png|gif)/']
+            // 'imageUrl' => ['required', 'regex:/(\d)+.(?:jpe?g|png|gif)/']
+            'imageUrl' => ['required', new IsImageUrl]
         ];
     }
 

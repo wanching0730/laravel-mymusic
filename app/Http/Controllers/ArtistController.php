@@ -58,11 +58,6 @@ class ArtistController extends Controller
         try {
             $artist = Artist::create($request->all());
 
-            // DB::transaction(function() use($artist, $request) {
-            //     $artist->saveOrFail();
-            //     $artist->songs()->sync($request->songs);
-            // });
-
             return response()->json([
                 'id' => $artist->id,
                 'created_at' => $artist->created_at,
@@ -122,7 +117,6 @@ class ArtistController extends Controller
             if(!$artist) throw new ModelNotFoundException; 
 
             $artist->update($request->all());
-            $artist->songs()->sync($request->songs);
 
             return response()->json(null, 204);
         } catch (ModelNotFoundException $ex) {

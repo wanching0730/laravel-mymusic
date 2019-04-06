@@ -56,9 +56,11 @@ class InitBouncer extends Command
         ]);
 
         // Define rights
-        $manageMembers = Bouncer::ability()->create([
-            'name' => 'manage-members',
-            'title' => 'Manage Members'
+
+        // Manage & View
+        $manageUsers = Bouncer::ability()->create([
+            'name' => 'manage-users',
+            'title' => 'Manage Users'
         ]);
 
         $manageSongs = Bouncer::ability()->create([
@@ -76,14 +78,14 @@ class InitBouncer extends Command
             'title' => 'Manage Albums'
         ]);
 
-        // view songs, albums, artists
+        // view songs, albums, artists (exlude users)
         $viewAll = Bouncer::ability()->create([
             'name' => 'view-all',
             'title' => 'View All'
         ]);
 
         // Assign rights to roles
-        Bouncer::allow($admin)->to($manageMembers);
+        Bouncer::allow($admin)->to($manageUsers);
         Bouncer::allow($admin)->to($manageSongs);
         Bouncer::allow($admin)->to($manageArtists);
         Bouncer::allow($admin)->to($viewAll);
@@ -102,5 +104,8 @@ class InitBouncer extends Command
 
         $user = User::where('email', 'user2@mymusic.info')->first();
         Bouncer::assign($guest)->to($user);
+
+        $user = User::where('email', 'user3@mymusic.info')->first();
+        Bouncer::assign($member)->to($user);
     }
 }
