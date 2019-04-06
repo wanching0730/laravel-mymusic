@@ -25,6 +25,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        // Gate::define('update-')
+        Gate::define('update-album', function ($user, $album) {
+            return $user->id == $album->user_id;
+        });
     }
 }

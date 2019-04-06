@@ -40,21 +40,28 @@ Route::middleware(['jwt.auth', 'can:manage-users'])->group(function() {
     // Routes for managing users (not developed in the practical exercise)
 });
 
-Route::middleware(['jwt.auth', 'can:manage-all'])->group(function() {
+Route::middleware(['jwt.auth', 'can:manage-artists'])->group(function() {
 
     Route::apiResource('artists', 'ArtistController')->only([
         'store',
         'update',
     ]);
+});
+
+Route::middleware(['jwt.auth', 'can:manage-albums'])->group(function() {
+
     Route::apiResource('albums', 'AlbumController')->only([
         'store',
         'update',
     ]);
+});
+
+Route::middleware(['jwt.auth', 'can:manage-songs'])->group(function() {
+
     Route::apiResource('songs', 'SongController')->only([
         'store',
         'update',
     ]);
-
 });
 
 Route::middleware(['jwt.auth', 'can:view-all'])->group(function() {

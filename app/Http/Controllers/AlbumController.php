@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use DB;
 use App\Album;
+use Illuminate\Support\Facades\Gate;
 use App\Http\Resources\AlbumResource;
 use App\Http\Resources\AlbumCollection;
 use App\Http\Requests\StoreAlbumRequest;
@@ -53,6 +54,11 @@ class AlbumController extends Controller
     {
         try {
             $album = Album::create($request->all());
+
+            DB::transaction(function() use($album, $request) {
+                $album->saveOrFail();
+                $album->songs()->sync($request->songs);
+            });
 
             return response()->json([
                 'id' => $album->id,
@@ -107,21 +113,23 @@ class AlbumController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try {
-            $album = Album::find($id);
-
-            if(!$album) throw new ModelNotFoundException; 
-
-            $album->update($request->all());
-            $album->songs()->sync($request->songs);
-
-            return response()->json(null, 204);
-        } catch (ModelNotFoundException $ex) {
-            return response()->json([
-                'message' => $ex->getMessage()], 404);
-        } catch (\Exception $ex) {
-            return response()->json([
-                'message' => $ex->getMessage()], 500);
+        if (Gate::allows('update-post', $post)) {
+            try {
+                $album = Album::find($id);
+    
+                if(!$album) throw new ModelNotFoundException; 
+    
+                $album->update($request->all());
+                $album->songs()->sync($request->songs);
+    
+                return response()->json(null, 204);
+            } catch (ModelNotFoundException $ex) {
+                return response()->json([
+                    'message' => $ex->getMessage()], 404);
+            } catch (\Exception $ex) {
+                return response()->json([
+                    'message' => $ex->getMessage()], 500);
+            }
         }
     }
 

@@ -58,10 +58,10 @@ class ArtistController extends Controller
         try {
             $artist = Artist::create($request->all());
 
-            DB::transaction(function() use($artist, $request) {
-                $artist->saveOrFail();
-                $artist->songs()->sync($request->songs);
-            });
+            // DB::transaction(function() use($artist, $request) {
+            //     $artist->saveOrFail();
+            //     $artist->songs()->sync($request->songs);
+            // });
 
             return response()->json([
                 'id' => $artist->id,
@@ -71,7 +71,7 @@ class ArtistController extends Controller
         } catch (ValidationException $ex) {
             return response()->json(['errors' => $ex->errors()], 422);
         } catch (\Exception $ex) {
-            return response()->json(['errors' => $ex->message()], 422);
+            return response()->json(['errors' => $ex->getMessage()], 422);
         }
     }
 

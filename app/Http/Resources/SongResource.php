@@ -21,8 +21,8 @@ class SongResource extends Resource
             'genre' => $this->genre,
             'origin' => $this->origin,
             'duration' => $this->duration,
-            'artists' => new ArtistCollection($this->whenLoaded('artists')),
-            'album' => new AlbumResource($this->whenLoaded('album'))
+            'artist' => new ArtistResource($this->whenLoaded('artist')),
+            'albums' => new AlbumCollection($this->whenLoaded('albums'))
         ];
     }
 }

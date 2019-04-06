@@ -29,7 +29,7 @@ class SongController extends Controller
         $artistName = $request->input('artistName');
         $albumName = $request->input('albumName');
 
-       $songs = Song::with(['artists','album'])
+       $songs = Song::with(['artist','albums'])
            ->when($name, function ($query) use ($name) {
                return $query->where('name', 'LIKE', "%$name%");
            })
@@ -39,10 +39,10 @@ class SongController extends Controller
            ->when($origin, function ($query) use ($origin) {
                return $query->where('origin', 'LIKE', "%$origin%");
            })
-           ->whereHas('artists', function($query) use ($artistName) {
+           ->whereHas('artist', function($query) use ($artistName) {
                $query->where('name', 'LIKE', "%$artistName%");
            })
-           ->whereHas('album', function($query) use ($albumName) {
+           ->whereHas('albums', function($query) use ($albumName) {
                $query->where('name', 'LIKE', "%$albumName%");
            })
            ->get();
@@ -70,12 +70,12 @@ class SongController extends Controller
     {
         try {
             $song = Song::create($request->all());
-            $song->album_id = $request->album_id;
+            $song->artist_id = $request->artist_id;
 
-            DB::transaction(function() use($song, $request) {
-                $song->saveOrFail();
-                $song->artists()->sync($request->artists);
-            });
+            // DB::transaction(function() use($song, $request) {
+            //     $song->saveOrFail();
+            //     $song->albums()->sync($request->albums);
+            // });
 
             return response()->json([
                 'id' => $song->id,
@@ -97,7 +97,7 @@ class SongController extends Controller
     public function show($id)
     {
         try {
-            $song = Song::with('artists')->with('album')->find($id);
+            $song = Song::with('artist')->with('albums')->find($id);
 
             if(!$song) throw new ModelNotFoundException;
 
@@ -138,7 +138,7 @@ class SongController extends Controller
             if (!$song) throw new ModelNotFoundException;
 
             $song->update($request->all());
-            $song->artists()->sync($request->artists);
+            $song->albums()->sync($request->albums);
 
             return response()->json('Data updated successfully', 200);
         } catch (ModelNotFoundException $ex) {

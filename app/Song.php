@@ -7,15 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 class Song extends Model
 {
     protected $fillable = [
-        'name', 'creationDate', 'genre', 'origin', 'duration', 'album_id'
+        'name', 'creationDate', 'genre', 'origin', 'duration', 'artist_id'
     ];
 
-    public function album()
+    public function artist()
     {
-        return $this->belongsTo(Album::class);
+        return $this->belongsTo(Artist::class);
     }
 
-    public function artists() {
-        return $this->belongsToMany(Artist::class);
+    public function albums() {
+        return $this->belongsToMany(Album::class);
     }
 }
