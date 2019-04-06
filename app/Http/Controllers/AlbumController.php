@@ -125,7 +125,9 @@ class AlbumController extends Controller
                     $album->songs()->sync($request->songs);
         
                     return response()->json(null, 204);
-               }
+               } else {
+                return response()->json('Data only can be updated by the album owner', 500);
+            }
             } catch (ModelNotFoundException $ex) {
                 return response()->json([
                     'message' => $ex->getMessage()], 404);
@@ -147,12 +149,17 @@ class AlbumController extends Controller
         try {
             $album = Album::find($id);
 
-            if (!$album) throw new ModelNotFoundException;
+            if (Gate::allows('delete-album', $album)) {
 
-            $album->songs()->detach();
-            $album->delete();
+                if (!$album) throw new ModelNotFoundException;
 
-            return response()->json('Data deleted successfully', 200);
+                $album->songs()->detach();
+                $album->delete();
+
+                return response()->json('Data deleted successfully', 200);
+            } else {
+                return response()->json('Data only can be deleted by the album owner', 500);
+            }
         } catch (ModelNotFoundException $ex) {
             return response()->json([
                 'message' => $ex->getMessage() ], 404);

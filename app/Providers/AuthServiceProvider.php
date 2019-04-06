@@ -28,5 +28,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('update-album', function ($user, $album) {
             return $user->id == $album->user_id;
         });
+
+        Gate::define('delete-album', function ($user, $album) {
+            return $user->id == $album->user_id;
+        });
     }
 }
