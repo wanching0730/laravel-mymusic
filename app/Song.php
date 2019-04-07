@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Song extends Model
 {
+    // duration: in seconds
     protected $fillable = [
         'name', 'creationDate', 'genre', 'origin', 'duration', 'artist_id'
     ];

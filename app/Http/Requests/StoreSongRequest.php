@@ -25,8 +25,8 @@ class StoreSongRequest extends ApiFormRequest
     {
         return [
             'name' => 'max:50',
-            //'creationDate' => 'date_format:Y-m-d|after:yesterday',
             'creationDate' => 'date_format:Y-m-d',
+            'duration' => 'integer|min:10'
         ];
     }
 

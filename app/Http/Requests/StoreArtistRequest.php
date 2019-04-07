@@ -24,7 +24,8 @@ class StoreArtistRequest extends ApiFormRequest
     public function rules()
     {
         return [
-            'name' => 'max:50'
+            'name' => 'max:50',
+            'age' => 'integer|min:1'
         ];
     }
 }
