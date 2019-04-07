@@ -16,23 +16,9 @@ class ArtistController extends Controller
      *
      * @return ArtistCollection
      */
-    public function index(Request $request)
+    public function index()
     {
-        $name = $request->input('name');
-        $nationality = $request->input('nationality');
-        $songName = $request->input('songName');
-
-        $artists = Artist::with('songs')
-            ->when($name, function ($query) use ($name) {
-                return $query->where('name', 'LIKE', "%$name%");
-            })
-            ->when($nationality, function ($query) use ($nationality) {
-                return $query->where('genre', 'LIKE', "%$nationality%");
-            })
-            ->whereHas('songs', function($query) use ($songName) {
-                return $query->where('name', 'LIKE', "%$songName%");
-            })
-            ->get();
+        $artists = Artist::with('songs')->get();
 
         return new ArtistCollection($artists);
     }
@@ -148,5 +134,26 @@ class ArtistController extends Controller
             return response()->json([
                 'message' => $ex->getMessage() ], 404);
         }
+    }
+
+    public function search(Request $request)
+    {
+        $name = $request->input('name');
+        $nationality = $request->input('nationality');
+        $songName = $request->input('songName');
+
+        $artists = Artist::with('songs')
+            ->when($name, function ($query) use ($name) {
+                return $query->where('name', 'LIKE', "%$name%");
+            })
+            ->when($nationality, function ($query) use ($nationality) {
+                return $query->where('genre', 'LIKE', "%$nationality%");
+            })
+            ->whereHas('songs', function($query) use ($songName) {
+                return $query->where('name', 'LIKE', "%$songName%");
+            })
+            ->get();
+
+        return new ArtistCollection($artists);
     }
 }

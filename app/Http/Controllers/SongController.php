@@ -21,30 +21,11 @@ class SongController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $name = $request->input('name');
-        $genre = $request->input('genre');
-        $origin = $request->input('origin');
-        $artistName = $request->input('artistName');
-        $albumName = $request->input('albumName');
-
        $songs = Song::with(['artist','albums'])
-           ->when($name, function ($query) use ($name) {
-               return $query->where('name', 'LIKE', "%$name%");
-           })
-           ->when($genre, function ($query) use ($genre) {
-               return $query->where('genre', 'LIKE', "%$gender%");
-           })
-           ->when($origin, function ($query) use ($origin) {
-               return $query->where('origin', 'LIKE', "%$origin%");
-           })
-           ->whereHas('artist', function($query) use ($artistName) {
-               $query->where('name', 'LIKE', "%$artistName%");
-           })
-           ->whereHas('albums', function($query) use ($albumName) {
-               $query->where('name', 'LIKE', "%$albumName%");
-           })
+           ->orderBy('creationDate', 'desc')
+           ->orderBy('name', 'acs')
            ->get();
 
        return new SongCollection($songs);
@@ -171,5 +152,36 @@ class SongController extends Controller
             return response()->json([
                 'message' => $ex->getMessage() ], 404);
         }
+    }
+
+    public function search(Request $request)
+    {
+        $name = $request->input('name');
+        $genre = $request->input('genre');
+        $origin = $request->input('origin');
+        $artistName = $request->input('artistName');
+        $albumName = $request->input('albumName');
+
+       $songs = Song::with(['artist','albums'])
+           ->when($name, function ($query) use ($name) {
+               return $query->where('name', 'LIKE', "%$name%");
+           })
+           ->when($genre, function ($query) use ($genre) {
+               return $query->where('genre', 'LIKE', "%$gender%");
+           })
+           ->when($origin, function ($query) use ($origin) {
+               return $query->where('origin', 'LIKE', "%$origin%");
+           })
+           ->whereHas('artist', function($query) use ($artistName) {
+               $query->where('name', 'LIKE', "%$artistName%");
+           })
+           ->whereHas('albums', function($query) use ($albumName) {
+               $query->where('name', 'LIKE', "%$albumName%");
+           })
+           ->orderBy('creationDate', 'desc')
+           ->orderBy('name', 'acs')
+           ->get();
+
+       return new SongCollection($songs);
     }
 }

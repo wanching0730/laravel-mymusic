@@ -17,18 +17,10 @@ class AlbumController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $name = $request->input('name');
-        $songName = $request->input('songName');
-
         $albums = Album::with('songs', 'songs.artist', 'user')
-            ->when($name, function ($query) use ($name) {
-                return $query->where('name', 'LIKE', "%$name%");
-            })
-            ->whereHas('songs', function($query) use ($songName) {
-                $query->where('name', 'LIKE', "%$songName%");
-            })
+            ->orderBy('creationDate', 'desc')
             ->get();
 
         return new AlbumCollection($albums);
@@ -164,5 +156,23 @@ class AlbumController extends Controller
             return response()->json([
                 'message' => $ex->getMessage() ], 404);
         }
+    }
+
+    public function search(Request $request)
+    {
+        $name = $request->input('name');
+        $songName = $request->input('songName');
+
+        $albums = Album::with('songs', 'songs.artist', 'user')
+            ->when($name, function ($query) use ($name) {
+                return $query->where('name', 'LIKE', "%$name%");
+            })
+            ->whereHas('songs', function($query) use ($songName) {
+                $query->where('name', 'LIKE', "%$songName%");
+            })
+            ->orderBy('creationDate', 'desc')
+            ->get();
+
+        return new AlbumCollection($albums);
     }
 }

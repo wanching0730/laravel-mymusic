@@ -31,6 +31,11 @@ Route::middleware('api')->namespace('Auth')->prefix('auth')->group(function() {
 });
 
 Route::middleware('jwt.auth')->group(function() {
+    Route::get('songs/search', 'SongController@search');
+    Route::get('albums/search', 'AlbumController@search');
+    Route::get('artists/search', 'ArtistController@search');
+    Route::get('users/search', 'UserController@search');
+
     Route::apiResource('albums', 'AlbumController');
     Route::apiResource('songs', 'SongController');
     Route::apiResource('artists', 'ArtistController');
@@ -87,5 +92,6 @@ Route::middleware(['jwt.auth', 'can:view-all'])->group(function() {
     Route::apiResource('songs', 'SongController')->only([
         'index',
         'show',
+        'search'
     ]);
 });
