@@ -104,7 +104,7 @@ class ArtistController extends Controller
 
             $artist->update($request->all());
 
-            return response()->json(null, 204);
+            return response()->json('Data updated successfully', 200);
         } catch (ModelNotFoundException $ex) {
             return response()->json([
                 'message' => $ex->getMessage()], 404);

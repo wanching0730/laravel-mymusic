@@ -105,28 +105,27 @@ class AlbumController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
-            try {
-                $album = Album::find($id);
+        try {
+            $album = Album::find($id);
 
-                if (Gate::allows('update-album', $album)) {
+            if (Gate::allows('update-album', $album)) {
+
+                if(!$album) throw new ModelNotFoundException; 
     
-                    if(!$album) throw new ModelNotFoundException; 
-        
-                    $album->update($request->all());
-                    $album->songs()->sync($request->songs);
-        
-                    return response()->json(null, 204);
-               } else {
+                $album->update($request->all());
+                $album->songs()->sync($request->songs);
+    
+                return response()->json('Data updated successfully', 200);
+            } else {
                 return response()->json('Data only can be updated by the album owner', 500);
             }
-            } catch (ModelNotFoundException $ex) {
-                return response()->json([
-                    'message' => $ex->getMessage()], 404);
-            } catch (\Exception $ex) {
-                return response()->json([
-                    'message' => $ex->getMessage()], 500);
-            }
+        } catch (ModelNotFoundException $ex) {
+            return response()->json([
+                'message' => $ex->getMessage()], 404);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'message' => $ex->getMessage()], 500);
+        }
         
     }
 

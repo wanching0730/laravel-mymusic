@@ -17,12 +17,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Route::apiResource('artists', 'ArtistController');
-// Route::apiResource('songs', 'SongController');
-// Route::apiResource('albums', 'AlbumController');
-
-// AuthController inside namespace Auth
-// all api route has prefix 'auth': /api/auth/login
 Route::middleware('api')->namespace('Auth')->prefix('auth')->group(function() { 
     Route::post('login', 'AuthController@login');
     Route::post('logout', 'AuthController@logout');
