@@ -145,6 +145,7 @@ class SongController extends Controller
 
             if (!$song) throw new ModelNotFoundException;
 
+            $song->albums()->detach();
             $song->delete();
 
             return response()->json('Data deleted successfully', 200);
