@@ -24,9 +24,11 @@ class StoreSongRequest extends ApiFormRequest
     public function rules()
     {
         return [
-            'name' => 'max:50',
-            'creationDate' => 'date_format:Y-m-d',
-            'duration' => 'integer|min:10'
+            'name' => 'required|max:50',
+            'creationDate' => 'required|date_format:Y-m-d',
+            'genre' => 'required',
+            'origin' => 'required',
+            'duration' => 'required|integer|min:10|max:600'
         ];
     }
 

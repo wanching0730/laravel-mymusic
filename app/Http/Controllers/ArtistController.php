@@ -8,6 +8,7 @@ use App\Http\Resources\ArtistResource;
 use App\Http\Resources\ArtistCollection;
 use App\Http\Requests\StoreArtistRequest;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ArtistController extends Controller
 {

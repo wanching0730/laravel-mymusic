@@ -25,8 +25,8 @@ class StoreAlbumRequest extends ApiFormRequest
     public function rules()
     {
         return [
-            'name' => 'max:50',
-            'creationDate' => 'date_format:Y-m-d',
+            'name' => 'required|max:50',
+            'creationDate' => 'required|date_format:Y-m-d',
             // 'imageUrl' => ['required', 'regex:/(\d)+.(?:jpe?g|png|gif)/']
             'imageUrl' => ['required', new IsImageUrl]
         ];

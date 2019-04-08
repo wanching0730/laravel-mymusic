@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\IsValidGender;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreArtistRequest extends ApiFormRequest
@@ -24,8 +25,10 @@ class StoreArtistRequest extends ApiFormRequest
     public function rules()
     {
         return [
-            'name' => 'max:50',
-            'age' => 'integer|min:1'
+            'name' => 'required|max:50',
+            'age' => 'required|integer|min:1|max:100',
+            'gender' => ['required', new IsValidGender],
+            'nationality' => 'required'
         ];
     }
 }

@@ -9,6 +9,7 @@ use App\Http\Resources\AlbumResource;
 use App\Http\Resources\AlbumCollection;
 use App\Http\Requests\StoreAlbumRequest;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class AlbumController extends Controller
 {
