@@ -143,7 +143,7 @@ class ArtistController extends Controller
         }
     }
 
-    public function search(StoreArtistRequest $request)
+    public function search(Request $request)
     {
         $name = $request->input('name');
         $nationality = $request->input('nationality');
@@ -154,7 +154,7 @@ class ArtistController extends Controller
                 return $query->where('name', 'LIKE', "%$name%");
             })
             ->when($nationality, function ($query) use ($nationality) {
-                return $query->where('genre', 'LIKE', "%$nationality%");
+                return $query->where('nationality', 'LIKE', "%$nationality%");
             })
             ->whereHas('songs', function($query) use ($songName) {
                 return $query->where('name', 'LIKE', "%$songName%");

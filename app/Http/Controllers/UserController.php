@@ -161,7 +161,7 @@ class UserController extends Controller
         }
     }
 
-    public function search(StoreUserRequest $request)
+    public function search(Request $request)
     {
         $name = $request->input('name');
         $albumName = $request->input('albumName');

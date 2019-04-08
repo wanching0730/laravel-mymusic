@@ -155,7 +155,7 @@ class SongController extends Controller
         }
     }
 
-    public function search(StoreSongRequest $request)
+    public function search(Request $request)
     {
         $name = $request->input('name');
         $genre = $request->input('genre');
@@ -168,7 +168,7 @@ class SongController extends Controller
                return $query->where('name', 'LIKE', "%$name%");
            })
            ->when($genre, function ($query) use ($genre) {
-               return $query->where('genre', 'LIKE', "%$gender%");
+               return $query->where('genre', 'LIKE', "%$genre%");
            })
            ->when($origin, function ($query) use ($origin) {
                return $query->where('origin', 'LIKE', "%$origin%");

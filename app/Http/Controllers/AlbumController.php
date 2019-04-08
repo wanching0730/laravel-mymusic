@@ -157,7 +157,7 @@ class AlbumController extends Controller
         }
     }
 
-    public function search(StoreAlbumRequest $request)
+    public function search(Request $request)
     {
         $name = $request->input('name');
         $songName = $request->input('songName');
