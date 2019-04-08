@@ -108,7 +108,7 @@ class AlbumController extends Controller
         try {
             $album = Album::find($id);
 
-            if (Gate::allows('update-album', $album)) {
+            if (Gate::allows('update-album', $album) || $album->user_id == NULL) {
 
                 if(!$album) throw new ModelNotFoundException; 
     
@@ -140,7 +140,7 @@ class AlbumController extends Controller
         try {
             $album = Album::find($id);
 
-            if (Gate::allows('delete-album', $album)) {
+            if (Gate::allows('delete-album', $album) || $album->user_id == NULL) {
 
                 if (!$album) throw new ModelNotFoundException;
 

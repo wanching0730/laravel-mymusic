@@ -9,6 +9,7 @@ use App\Http\Resources\UserResource;
 use App\Http\Resources\UserCollection;
 use App\Http\Requests\StoreUserRequest;
 use Illuminate\Http\Request;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -50,6 +51,7 @@ class UserController extends Controller
             $request->merge([ 'password' => $bcryptPassword ]);
             $user = User::create($request->all());
 
+            // Assign role for new user
             $role = $request->role;
             if ($role != 'admin' && $role != 'member' && $role != 'guest') {
                 throw new HttpResponseException(response()->json([
@@ -155,7 +157,14 @@ class UserController extends Controller
 
             if (!$user) throw new ModelNotFoundException;
 
-            $user->albums()->delete();
+            if($user->albums) {
+                foreach ($user->albums as $album) {
+                    $album->user()->dissociate();
+                    $album->save();
+                }
+            }
+            
+            $user->delete();
 
             return response()->json('Data deleted successfully', 200);
         } catch (ModelNotFoundException $ex) {

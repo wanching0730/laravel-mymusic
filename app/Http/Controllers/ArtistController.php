@@ -127,6 +127,13 @@ class ArtistController extends Controller
 
             if (!$artist) throw new ModelNotFoundException;
 
+            if($artist->songs) {
+                foreach ($artist->songs as $song) {
+                    $song->artist()->dissociate();
+                    $song->save();
+                }
+            }
+            
             $artist->delete();
 
             return response()->json('Data deleted successfully', 200);
