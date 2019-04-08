@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Validation\Rule;
+use App\Rules\IsValidRole;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreUserRequest extends ApiFormRequest
@@ -27,7 +27,7 @@ class StoreUserRequest extends ApiFormRequest
         return [
             'name' => 'max:50',
             'email' => 'required|email',
-            'role' => ['required', Rule::in('admin', 'member', 'guest')]
+            'role' => ['required', new IsValidRole]
         ];
     }
 }

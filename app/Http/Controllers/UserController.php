@@ -78,7 +78,7 @@ class UserController extends Controller
             // load both authors and publisher attributes
             $user = User::with('albums')->find($id);
             
-            if(!$user) throw new ModelNotFoundException;
+            if(!$user) throw new ModelNotFoundException('User not found');
 
             return new UserResource($user);
         } catch(ModelNotFoundException $ex) {
@@ -111,7 +111,7 @@ class UserController extends Controller
         try {
             $user = User::find($id);
 
-            if(!$user) throw new ModelNotFoundException; 
+            if(!$user) throw new ModelNotFoundException('User not found'); 
 
             $password = $request->password;
             $bcryptPassword = bcrypt($password);
@@ -143,21 +143,22 @@ class UserController extends Controller
         try {
             $user = User::find($id);
 
-            if (!$user) throw new ModelNotFoundException;
+            if (!$user) throw new ModelNotFoundException('User not found');
 
             if($user->albums) {
                 foreach ($user->albums as $album) {
-                    $album->user()->dissociate();
-                    $album->save();
+                    $album->songs()->detach();
+                    $album->delete();
                 }
             }
             
+            $user->roles()->detach();
             $user->delete();
 
             return response()->json('Data deleted successfully', 200);
         } catch (ModelNotFoundException $ex) {
             return response()->json([
-                'message' => $ex->getMessage() ], 404);
+                'message' => 'User not found' ], 404);
         }
     }
 

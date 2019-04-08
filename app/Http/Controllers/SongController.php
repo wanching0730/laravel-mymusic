@@ -80,7 +80,7 @@ class SongController extends Controller
         try {
             $song = Song::with('artist')->with('albums')->find($id);
 
-            if(!$song) throw new ModelNotFoundException;
+            if(!$song) throw new ModelNotFoundException('Song not found');
 
             return new SongResource($song);
         } catch (ModelNotFoundException $ex) {
@@ -116,7 +116,7 @@ class SongController extends Controller
         try {
             $song = Song::find($id);
 
-            if (!$song) throw new ModelNotFoundException;
+            if (!$song) throw new ModelNotFoundException('Song not found');
 
             $song->update($request->all());
             $song->albums()->sync($request->albums);
@@ -143,7 +143,7 @@ class SongController extends Controller
         try {
             $song = Song::find($id);
 
-            if (!$song) throw new ModelNotFoundException;
+            if (!$song) throw new ModelNotFoundException('Song not found');
 
             $song->albums()->detach();
             $song->delete();
@@ -151,7 +151,7 @@ class SongController extends Controller
             return response()->json('Data deleted successfully', 200);
         } catch (ModelNotFoundException $ex) {
             return response()->json([
-                'message' => $ex->getMessage() ], 404);
+                'message' => $ex->getMessage()], 404);
         }
     }
 

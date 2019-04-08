@@ -75,7 +75,7 @@ class AlbumController extends Controller
         try {
             // load both authors and publisher attributes
             $album = Album::with('songs', 'songs.artist', 'user')->find($id);
-            if(!$album) throw new ModelNotFoundException;
+            if(!$album) throw new ModelNotFoundException('Album not found');
 
             return new AlbumResource($album);
         } catch(ModelNotFoundException $ex) {
@@ -108,9 +108,9 @@ class AlbumController extends Controller
         try {
             $album = Album::find($id);
 
-            if (Gate::allows('update-album', $album) || $album->user_id == NULL) {
+            if (Gate::allows('update-album', $album)) {
 
-                if(!$album) throw new ModelNotFoundException; 
+                if(!$album) throw new ModelNotFoundException('Album not found');
     
                 $album->update($request->all());
                 $album->songs()->sync($request->songs);
@@ -140,9 +140,9 @@ class AlbumController extends Controller
         try {
             $album = Album::find($id);
 
-            if (Gate::allows('delete-album', $album) || $album->user_id == NULL) {
+            if (Gate::allows('delete-album', $album)) {
 
-                if (!$album) throw new ModelNotFoundException;
+                if (!$album) throw new ModelNotFoundException('Album not found');
 
                 $album->songs()->detach();
                 $album->delete();

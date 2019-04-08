@@ -67,7 +67,7 @@ class ArtistController extends Controller
         try {
             // load both authors and publisher attributes
             $artist = Artist::with('songs')->find($id);
-            if(!$artist) throw new ModelNotFoundException;
+            if(!$artist) throw new ModelNotFoundException('Artist not found');
 
             return new ArtistResource($artist);
         } catch(ModelNotFoundException $ex) {
@@ -100,7 +100,7 @@ class ArtistController extends Controller
         try {
             $artist = Artist::find($id);
 
-            if(!$artist) throw new ModelNotFoundException; 
+            if(!$artist) throw new ModelNotFoundException('Artist not found'); 
 
             $artist->update($request->all());
 
@@ -125,7 +125,7 @@ class ArtistController extends Controller
         try {
             $artist = Artist::find($id);
 
-            if (!$artist) throw new ModelNotFoundException;
+            if (!$artist) throw new ModelNotFoundException('Artist not found');
 
             if($artist->songs) {
                 foreach ($artist->songs as $song) {
