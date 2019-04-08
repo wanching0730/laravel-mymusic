@@ -9,7 +9,6 @@ use App\Http\Resources\UserResource;
 use App\Http\Resources\UserCollection;
 use App\Http\Requests\StoreUserRequest;
 use Illuminate\Http\Request;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -53,11 +52,6 @@ class UserController extends Controller
 
             // Assign role for new user
             $role = $request->role;
-            if ($role != 'admin' && $role != 'member' && $role != 'guest') {
-                throw new HttpResponseException(response()->json([
-                    'errors' => 'Only Admin, Member, Staff roles are allowed'
-                ], 500));
-            }
             Bouncer::assign($role)->to($user);
 
             return response()->json([
@@ -112,7 +106,7 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StoreUserRequest $request, $id)
     {
         try {
             $user = User::find($id);
@@ -125,12 +119,6 @@ class UserController extends Controller
             $user->update($request->all());
 
             $role = $request->role;
-            if ($role != 'admin' && $role != 'member' && $role != 'guest') {
-                throw new HttpResponseException(response()->json([
-                    'errors' => 'only Admin, Member, Guest roles are allowed'
-                ], 500));
-            }
-
             $user->roles()->detach();
             Bouncer::assign($role)->to($user);
 
@@ -173,7 +161,7 @@ class UserController extends Controller
         }
     }
 
-    public function search(Request $request)
+    public function search(StoreUserRequest $request)
     {
         $name = $request->input('name');
         $albumName = $request->input('albumName');

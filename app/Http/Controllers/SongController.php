@@ -111,7 +111,7 @@ class SongController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StoreSongRequest $request, $id)
     {
         try {
             $song = Song::find($id);
@@ -155,7 +155,7 @@ class SongController extends Controller
         }
     }
 
-    public function search(Request $request)
+    public function search(StoreSongRequest $request)
     {
         $name = $request->input('name');
         $genre = $request->input('genre');

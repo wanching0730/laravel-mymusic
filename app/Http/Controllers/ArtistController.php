@@ -95,7 +95,7 @@ class ArtistController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StoreArtistRequest $request, $id)
     {
         try {
             $artist = Artist::find($id);
@@ -143,7 +143,7 @@ class ArtistController extends Controller
         }
     }
 
-    public function search(Request $request)
+    public function search(StoreArtistRequest $request)
     {
         $name = $request->input('name');
         $nationality = $request->input('nationality');

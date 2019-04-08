@@ -103,7 +103,7 @@ class AlbumController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StoreAlbumRequest $request, $id)
     {
         try {
             $album = Album::find($id);
@@ -157,7 +157,7 @@ class AlbumController extends Controller
         }
     }
 
-    public function search(Request $request)
+    public function search(StoreAlbumRequest $request)
     {
         $name = $request->input('name');
         $songName = $request->input('songName');
